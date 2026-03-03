@@ -25,7 +25,7 @@ pipeline {
                     echo GIT_BRANCH: $GIT_BRANCH
                     echo BRANCH_NAME: $BRANCH_NAME
                 '''
-                
+
             }
         }
 
@@ -57,6 +57,7 @@ pipeline {
                     sleep 5
                 '''
             }
+            
         }
 
         stage('when parameter') {
