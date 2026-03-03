@@ -60,6 +60,7 @@ pipeline {
             
         }
 
+
         stage('when parameter') {
             when {
                 expression { params.DEPLOY == true }
