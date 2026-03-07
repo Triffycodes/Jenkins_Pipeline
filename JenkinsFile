@@ -19,7 +19,6 @@ pipeline {
                 }
                 checkout ([ $class: 'GitSCM',
                             branches: [[name: "*/${params.BRANCH}"]], 
-                            extensions: [], 
                             userRemoteConfigs: [[
                                 credentialsId: 'Triffycodes', 
                                 url: 'https://github.com/Triffycodes/Jenkins_Pipeline.git'
