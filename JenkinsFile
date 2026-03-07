@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to build (e.g. main, feature/xyz)')
         booleanParam(name: 'DEPLOY', description: 'Want to deploy to Production')
     }
     
@@ -12,8 +13,12 @@ pipeline {
     stages {
         stage('CHECKOUT BRANCH') {
             steps {
+                // checkout the branch specified by the BRANCH parameter
+                script {
+                    echo "Checking out branch: ${params.BRANCH}"
+                }
                 checkout ([ $class: 'GitSCM',
-                            branches: [[name: '*/main']], 
+                            branches: [[name: "*/${params.BRANCH}"]], 
                             extensions: [], 
                             userRemoteConfigs: [[
                                 credentialsId: 'Triffycodes', 
@@ -29,10 +34,10 @@ pipeline {
             }
         }
 
-        stage('STAGE1 When branch main') {
+        stage('STAGE1 When matching branch') {
             when {
                 expression {
-                    return env.GIT_BRANCH == 'origin/main'
+                    return env.GIT_BRANCH == "origin/${params.BRANCH}"
                 }
             }
             steps {

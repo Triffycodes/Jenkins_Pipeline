@@ -1,0 +1,66 @@
+pipeline{
+    agent { label : 'slave1 || slave2' }
+
+    parameters{
+        string(name: 'NAME'. defaultValue: 'Triffycodes', description: 'Enter your name')
+        booleanParam(name: 'DEPLOY', defalutValue: false, description: 'Do you want to deploy to production?')
+
+    }
+
+    environment{
+        CURRENT_ENV = 'dev'
+    }
+
+    options{
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timestamps()
+        retry(2)
+    }
+
+    stages{
+        stage('BUILD'){
+            steps{
+                sh '''
+                    npm install
+                '''
+            }
+            steps{
+                sh '''
+                    npm run build
+                '''
+            }
+        }
+        stage('TEST'){
+            steps{
+                sh '''
+                    npm run test
+                '''
+            }
+
+        }
+
+        stage('DEPLOY TO PRODUCTION'){
+            when{
+                expression{
+                    return params.DEPLOY == true
+                }
+            }
+            steps{
+                sh '''
+                    echo "Deploying to production"
+                '''
+            }
+        }
+        stage('DEPLOY TO DEV'){
+            when{
+                environment name: 'CURRENT_ENV', value: 'dev'
+            }
+            steps{
+                sh '''
+                    echo "Deploying to dev environment"
+                '''
+            }
+        }
+    }
+}
